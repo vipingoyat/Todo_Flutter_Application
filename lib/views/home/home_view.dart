@@ -1,9 +1,11 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:lottie/lottie.dart';
 import 'package:untitled/extensions/space_exs.dart';
 import 'package:untitled/utils/app_colors.dart';
 import 'package:untitled/utils/constants.dart';
+import 'package:untitled/views/home/components/home_app_bar.dart';
 import 'package:untitled/views/home/widget/task_widget.dart';
 import '../../utils/app_str.dart';
 import 'components/fab.dart';
@@ -31,7 +33,18 @@ class _HomeViewState extends State<HomeView> {
 
       //Body
 
-      body: _buildHomeBody(textTheme),
+      body: SliderDrawer(
+
+        //Drawer
+          slider: Container(
+            color: Colors.red,
+          ),
+
+          appBar: const HomeAppBar(),
+
+          //Main Body
+          child: _buildHomeBody(textTheme)
+      ),
     );
   }
 

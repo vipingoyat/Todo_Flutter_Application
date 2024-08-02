@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/views/home/home_view.dart';
-import 'package:untitled/views/tasks/widget/task_view.dart';
 
 Future<void> main() async{
   runApp(const MyApp());

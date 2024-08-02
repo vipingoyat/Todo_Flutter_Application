@@ -29,7 +29,7 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  //OnToggle
+  ///OnToggle
   void onDrawerToggle(){
     setState(() {
       isDrawerOpen = !isDrawerOpen;
@@ -54,7 +54,7 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
 
-            //Menu Icon
+            ///Menu Icon
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: IconButton(
@@ -67,7 +67,7 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
               ),
             ),
 
-            //Trash Icon
+            ///Trash Icon
             Padding(
               padding: const EdgeInsets.only(right: 15,top: 10),
               child: IconButton(

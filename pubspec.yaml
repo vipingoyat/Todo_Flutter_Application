@@ -52,6 +52,8 @@ dependencies:
   #Dialogs
   panara_dialogs: ^0.1.5
 
+  flutter_datetime_picker: ^1.5.1
+
   #Animations Export as json
   lottie: ^3.1.2
 

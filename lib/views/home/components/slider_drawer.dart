@@ -8,7 +8,7 @@ import 'package:untitled/utils/app_colors.dart';
 class CustomDrawer extends StatelessWidget {
   CustomDrawer({super.key});
 
-  //Icons
+  ///Icons
   final List<IconData> icons = [
     CupertinoIcons.home,
     CupertinoIcons.person_fill,
@@ -16,7 +16,7 @@ class CustomDrawer extends StatelessWidget {
     CupertinoIcons.info_circle_fill,
   ];
 
-  //Texts
+  ///Texts
   final List<String> texts = ["Home", "Profile", "Settings", "Detail"];
 
   @override

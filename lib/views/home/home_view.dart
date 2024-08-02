@@ -20,7 +20,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   GlobalKey<SliderDrawerState> drawerKey = GlobalKey<SliderDrawerState>();
-  final List<int> testing = [1,2,3];
+  final List<int> testing = [1, 2, 3];
 
   @override
   Widget build(BuildContext context) {
@@ -28,39 +28,32 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      //FAB
+      ///FAB
       floatingActionButton: const Fab(),
 
-
-      //Body
-
+      ///Body
       body: SliderDrawer(
-        key: drawerKey,
-        isDraggable: false,
-        animationDuration: 1000,
+          key: drawerKey,
+          isDraggable: false,
+          animationDuration: 1000,
 
-        //Drawer
+          ///Drawer
           slider: CustomDrawer(),
-
           appBar: HomeAppBar(drawerKey: drawerKey),
 
-          //Main Body
-          child: _buildHomeBody(textTheme)
-      ),
+          ///Main Body
+          child: _buildHomeBody(textTheme)),
     );
   }
 
-
-  //Home Body
+  ///Home Body
   Widget _buildHomeBody(TextTheme textTheme) {
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: Column(
         children: [
-
-
-          //Custom AppBar
+          ///Custom AppBar
           Container(
             width: double.infinity,
             // margin: const EdgeInsets.only(),
@@ -68,24 +61,21 @@ class _HomeViewState extends State<HomeView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-
-                //Progress Indicator
+                ///Progress Indicator
                 const SizedBox(
                   width: 40,
                   height: 40,
                   child: CircularProgressIndicator(
                     value: 1 / 3,
                     backgroundColor: Colors.grey,
-                    valueColor:
-                    AlwaysStoppedAnimation(AppColors.primaryColor),
+                    valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
                   ),
                 ),
 
                 //Space
                 25.w,
 
-                //Top Level Task Info
+                ///Top Level Task Info
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,9 +92,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
 
-
-          //Divider
-
+          ///Divider
           const Padding(
             padding: EdgeInsets.only(top: 10),
             child: Divider(
@@ -116,70 +104,66 @@ class _HomeViewState extends State<HomeView> {
           //Tasks
           SizedBox(
             width: double.infinity,
-            height:446,
+            height: 446,
             child: testing.isNotEmpty
 
-
-
-            //Task List is Not empty
-
+                ///Task List is Not empty
                 ? ListView.builder(
-              itemCount: testing.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                return Dismissible(
-                  direction: DismissDirection.horizontal,
-                  onDismissed: (_) {
-                    setState(() {
-                      testing.removeAt(index);
-                    });
-                  },
-                  background: Row(
+                    itemCount: testing.length,
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) {
+                      return Dismissible(
+                        direction: DismissDirection.horizontal,
+                        onDismissed: (_) {
+                          setState(() {
+                            testing.removeAt(index);
+                          });
+                        },
+                        background: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.delete_outline,
+                              color: Colors.grey,
+                            ),
+                            8.w,
+                            const Text(
+                              AppStr.deletedTask,
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        key: Key(testing[index].toString()),
+                        child: const TaskWidget(),
+                      );
+                    },
+                  )
+
+                ///Task List is empty
+                : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.delete_outline,
-                        color: Colors.grey,
-                      ),
-                      8.w,
-                      const Text(
-                        AppStr.deletedTask,
-                        style: TextStyle(
-                          color: Colors.grey,
+                      ///Lottie Animation
+                      FadeIn(
+                        child: SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Lottie.asset(
+                            lottieURL,
+                            animate: true,
+                          ),
                         ),
+                      ),
+
+                      ///Sub Text
+                      FadeInUp(
+                        from: 30,
+                        child: const Text(AppStr.doneAllTask),
                       ),
                     ],
                   ),
-                  key: Key(testing[index].toString()),
-                  child: const TaskWidget(),
-                );
-              },
-            )
-
-            //Task List is empty
-                : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                //Lottie Animation
-                FadeIn(
-                  child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Lottie.asset(
-                      lottieURL,
-                      animate: true,
-                    ),
-                  ),
-                ),
-
-                //Sub Text
-                FadeInUp(
-                  from: 30,
-                  child: const Text(AppStr.doneAllTask),
-                ),
-              ],
-            ),
           ),
         ],
       ),

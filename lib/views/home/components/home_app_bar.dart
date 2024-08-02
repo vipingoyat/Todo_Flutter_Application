@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:untitled/utils/constants.dart';
 
 class HomeAppBar extends StatefulWidget {
   const HomeAppBar({super.key, required this.drawerKey});
@@ -72,7 +73,7 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
               padding: const EdgeInsets.only(right: 15,top: 10),
               child: IconButton(
                 onPressed : (){
-                  //TODO: We Will Remove All the Task from DB With This Button
+                  updateTaskWarning(context);
                 },
                 icon: const Icon(
                   CupertinoIcons.trash,

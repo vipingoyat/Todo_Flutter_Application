@@ -5,20 +5,29 @@ import 'package:untitled/extensions/space_exs.dart';
 import 'package:untitled/utils/app_colors.dart';
 import 'package:untitled/utils/app_str.dart';
 import 'package:untitled/views/tasks/widget/task_view_app_bar.dart';
+import '../../../models/task.dart';
 import '../components/date_time_selection.dart';
 import '../components/rep_textfield.dart';
 
 class TaskView extends StatefulWidget {
-  const TaskView({super.key});
+  const TaskView({
+    super.key,
+     this.titleTaskController,
+     this.descriptionTaskController,
+    required this.task
+  });
+
+
+  final TextEditingController? titleTaskController;
+   final TextEditingController? descriptionTaskController;
+   final Task? task;
+
 
   @override
   State<TaskView> createState() => _TaskViewState();
 }
 
 class _TaskViewState extends State<TaskView> {
-  final TextEditingController titleTaskController = TextEditingController();
-  final TextEditingController descriptionTaskController =
-      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -129,12 +138,12 @@ class _TaskViewState extends State<TaskView> {
           ),
 
           ///Task Title
-          RepTextField(controller: titleTaskController),
+          RepTextField(controller: widget.titleTaskController),
           10.h,
 
           ///Task Description
           RepTextField(
-            controller: descriptionTaskController,
+            controller: widget.descriptionTaskController,
             isForDescription: true,
           ),
 

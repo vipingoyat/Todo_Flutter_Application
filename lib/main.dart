@@ -1,8 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:untitled/data/hive_data_store.dart';
 import 'package:untitled/views/home/home_view.dart';
+import 'models/task.dart';
 
-Future<void> main() async{
-  runApp(const MyApp());
+Future<void> main() async {
+
+  ///Init Hive DB before runAPP
+  await Hive.initFlutter();
+
+  ///Register Hive Adapter
+  Hive.registerAdapter<Task>(TaskAdapter());
+
+  ///Open a Box
+  Box box = await Hive.openBox<Task>(HiveDataStore.boxName);
+
+  ///Not necessary step
+  ///Delete data from previous day
+  box.values.forEach(
+        (task) {
+      if (task.createdAtTime.day != DateTime.now().day){
+        task.delete();
+      }
+      else{
+        ///Do Nothing
+      }
+    },
+  );
+
+  runApp(BaseWidget(child: const MyApp()));
+}
+
+/// The inherited widget provides us with a convenient way
+/// to pass data between widgets. While developing an app
+/// you will need some data from your parent's widgets or
+/// grant parent widgets or maybe beyond that.
+class BaseWidget extends InheritedWidget{
+  BaseWidget({Key? key, required this.child}): super(key: key,child: child);
+  final HiveDataStore dataStore = HiveDataStore();
+  final Widget child;
+
+  static BaseWidget of(BuildContext context){
+    final base = context.dependOnInheritedWidgetOfExactType<BaseWidget>();
+    if(base!=null){
+      return base;
+    }
+    else{
+      throw StateError('Could not find ancestor widget of type BaseWidget');
+    }
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
+  }
+
 }
 
 class MyApp extends StatelessWidget {
@@ -61,16 +113,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class TestPage extends StatefulWidget{
+class TestPage extends StatefulWidget {
   const TestPage({super.key});
 
   @override
   State<TestPage> createState() => _TestPageState();
 }
 
-class _TestPageState extends State<TestPage>{
+class _TestPageState extends State<TestPage> {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
     );

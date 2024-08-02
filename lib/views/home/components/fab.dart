@@ -14,7 +14,7 @@ class Fab extends StatelessWidget {
       onTap: () {
         ///We will navigate to task View by tapping on this button
         Navigator.push(
-            context, CupertinoPageRoute(builder: (_) => const TaskView()));
+            context, CupertinoPageRoute(builder: (_) => TaskView(titleTaskController: null, descriptionTaskController: null,task: null,)));
       },
       child: Material(
         borderRadius: BorderRadius.circular(15),

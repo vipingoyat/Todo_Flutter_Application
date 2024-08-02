@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:lottie/lottie.dart';
 import 'package:untitled/extensions/space_exs.dart';
+import 'package:untitled/models/task.dart';
 import 'package:untitled/utils/app_colors.dart';
 import 'package:untitled/utils/constants.dart';
 import 'package:untitled/views/home/components/home_app_bar.dart';
@@ -136,7 +137,16 @@ class _HomeViewState extends State<HomeView> {
                           ],
                         ),
                         key: Key(testing[index].toString()),
-                        child: const TaskWidget(),
+                        child: TaskWidget(
+                          task: Task(
+                            id: "1",
+                            title: "Home Task",
+                            subtitle: "Clean The Room",
+                            createAtTime: DateTime.now(),
+                            createdAtDate: DateTime.now(),
+                            isCompleted: false,
+                          ),
+                        ),
                       );
                     },
                   )

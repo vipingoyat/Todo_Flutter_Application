@@ -1,8 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:untitled/extensions/space_exs.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/models/task.dart';
 import 'package:untitled/utils/app_colors.dart';
 import 'package:untitled/utils/constants.dart';
@@ -21,34 +23,75 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   GlobalKey<SliderDrawerState> drawerKey = GlobalKey<SliderDrawerState>();
-  final List<int> testing = [1, 2, 3];
+
+
+  ///Check value for Circle Indicator
+  dynamic valueOfIndicator(List<Task> task){
+    if(task.isNotEmpty){
+      return task.length;
+    }
+    else{
+      return 3;
+    }
+  }
+
+  ///Check Done tasks
+  int checkDoneTasks(List<Task> tasks){
+    int i=0;
+    for(Task doneTask in tasks){
+      if(doneTask.isCompleted){
+        i++;
+      }
+    }
+    return i;
+  }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      backgroundColor: Colors.white,
+    final base = BaseWidget.of(context);
+    return ValueListenableBuilder(valueListenable: base.dataStore.listenToTask(), builder: (ctx,Box<Task> box,Widget? child){
 
-      ///FAB
-      floatingActionButton: const Fab(),
+      var tasks = box.values.toList();
 
-      ///Body
-      body: SliderDrawer(
-          key: drawerKey,
-          isDraggable: false,
-          animationDuration: 1000,
+      ///For sorting the list
+      tasks.sort((a,b)=> a.createdAtDate.compareTo(b.createdAtDate));
 
-          ///Drawer
-          slider: CustomDrawer(),
-          appBar: HomeAppBar(drawerKey: drawerKey),
 
-          ///Main Body
-          child: _buildHomeBody(textTheme)),
-    );
+
+
+      return Scaffold(
+        backgroundColor: Colors.white,
+
+        ///FAB
+        floatingActionButton: const Fab(),
+
+        ///Body
+        body: SliderDrawer(
+            key: drawerKey,
+            isDraggable: false,
+            animationDuration: 1000,
+
+            ///Drawer
+            slider: CustomDrawer(),
+            appBar: HomeAppBar(drawerKey: drawerKey),
+
+            ///Main Body
+            child: _buildHomeBody(
+                textTheme,
+              base,
+              tasks
+            )),
+      );
+    });
   }
 
   ///Home Body
-  Widget _buildHomeBody(TextTheme textTheme) {
+  Widget _buildHomeBody(
+      TextTheme textTheme,
+      BaseWidget base,
+      List<Task> tasks,
+      ) {
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
@@ -63,13 +106,13 @@ class _HomeViewState extends State<HomeView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ///Progress Indicator
-                const SizedBox(
+                 SizedBox(
                   width: 40,
                   height: 40,
                   child: CircularProgressIndicator(
-                    value: 1 / 3,
+                    value: checkDoneTasks(tasks)/valueOfIndicator(tasks),
                     backgroundColor: Colors.grey,
-                    valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
+                    valueColor: const AlwaysStoppedAnimation(AppColors.primaryColor),
                   ),
                 ),
 
@@ -86,7 +129,9 @@ class _HomeViewState extends State<HomeView> {
                       style: textTheme.displayLarge,
                     ),
                     4.h,
-                    const Text("1 of 3 task"),
+                    Text(
+                        "${checkDoneTasks(tasks)} of ${tasks.length} task"
+                    ),
                   ],
                 ),
               ],
@@ -105,20 +150,21 @@ class _HomeViewState extends State<HomeView> {
           //Tasks
           SizedBox(
             width: double.infinity,
-            height: 446,
-            child: testing.isNotEmpty
+            height: 500,
+            child: tasks.isNotEmpty
 
                 ///Task List is Not empty
                 ? ListView.builder(
-                    itemCount: testing.length,
+                    itemCount: tasks.length,
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
+
+                      ///Get single task for showing
+                      var task = tasks[index];
                       return Dismissible(
                         direction: DismissDirection.horizontal,
                         onDismissed: (_) {
-                          setState(() {
-                            testing.removeAt(index);
-                          });
+                          base.dataStore.deleteTask(task: task);
                         },
                         background: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -136,17 +182,8 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ],
                         ),
-                        key: Key(testing[index].toString()),
-                        child: TaskWidget(
-                          task: Task(
-                            id: "1",
-                            title: "Home Task",
-                            subtitle: "Clean The Room",
-                            createAtTime: DateTime.now(),
-                            createdAtDate: DateTime.now(),
-                            isCompleted: false,
-                          ),
-                        ),
+                        key: Key(task.id),
+                        child: TaskWidget(task: task,),
                       );
                     },
                   )

@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:untitled/views/tasks/widget/task_view.dart';
 import '../../../models/task.dart';
 import '../../../utils/app_colors.dart';
 
@@ -37,6 +39,13 @@ class _TaskWidgetState extends State<TaskWidget> {
     return GestureDetector(
       onTap: () {
         //Navigate to task View to see the Details
+        Navigator.push(context,
+            CupertinoPageRoute(builder: (ctx)=>TaskView(
+              titleTaskController: taskControllerForTitle,
+              descriptionTaskController: taskControllerForSubtitle,
+              task: widget.task,
+            ),
+            ));
       },
 
       ///Main Card
@@ -58,7 +67,8 @@ class _TaskWidgetState extends State<TaskWidget> {
             ///Check Icon
             leading: GestureDetector(
               onTap: () {
-                //Check or UnCheck the Task
+                widget.task.isCompleted = !widget.task.isCompleted;
+                widget.task.save();
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 600),

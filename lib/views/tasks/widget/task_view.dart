@@ -1,33 +1,140 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_date_picker_fork/flutter_cupertino_date_picker_fork.dart';
+import 'package:intl/intl.dart';
 import 'package:untitled/extensions/space_exs.dart';
 import 'package:untitled/utils/app_colors.dart';
 import 'package:untitled/utils/app_str.dart';
+import 'package:untitled/utils/constants.dart';
 import 'package:untitled/views/tasks/widget/task_view_app_bar.dart';
+import '../../../main.dart';
 import '../../../models/task.dart';
 import '../components/date_time_selection.dart';
 import '../components/rep_textfield.dart';
 
-class TaskView extends StatefulWidget {
-  const TaskView({
-    super.key,
-     this.titleTaskController,
-     this.descriptionTaskController,
-    required this.task
-  });
 
+class TaskView extends StatefulWidget {
+  const TaskView(
+      {super.key,
+      required this.titleTaskController,
+      required this.descriptionTaskController,
+      required this.task});
 
   final TextEditingController? titleTaskController;
-   final TextEditingController? descriptionTaskController;
-   final Task? task;
-
+  final TextEditingController? descriptionTaskController;
+  final Task? task;
 
   @override
   State<TaskView> createState() => _TaskViewState();
 }
 
 class _TaskViewState extends State<TaskView> {
+
+
+  /// Show Selected Time As String Format
+  String showTime(DateTime? time) {
+    if (widget.task?.createAtTime == null) {
+      if (time == null) {
+        return DateFormat('hh:mm a').format(DateTime.now()).toString();
+      } else {
+        return DateFormat('hh:mm a').format(time).toString();
+      }
+    } else {
+      return DateFormat('hh:mm a')
+          .format(widget.task!.createAtTime)
+          .toString();
+    }
+  }
+
+  /// Show Selected Date As String Format
+  String showDate(DateTime? date) {
+    if (widget.task?.createdAtDate == null) {
+      if (date == null) {
+        return DateFormat.yMMMEd().format(DateTime.now()).toString();
+      } else {
+        return DateFormat.yMMMEd().format(date).toString();
+      }
+    } else {
+      return DateFormat.yMMMEd().format(widget.task!.createdAtDate).toString();
+    }
+  }
+
+  // Show Selected Date As DateTime Format
+  DateTime showDateAsDateTime(DateTime? date) {
+    if (widget.task?.createdAtDate == null) {
+      if (date == null) {
+        return DateTime.now();
+      } else {
+        return date;
+      }
+    } else {
+      return widget.task!.createdAtDate;
+    }
+  }
+
+
+  /// If any task already exist app will update it otherwise the app will add a new task
+  dynamic isTaskAlreadyExistUpdateTaskOtherwiseCreate() {
+    ///Here we update the current task
+    if (widget.titleTaskController?.text != null &&
+        widget.descriptionTaskController?.text != null) {
+      try {
+        widget.titleTaskController?.text = title;
+        widget.descriptionTaskController?.text = subtitle;
+
+        // widget.task?.createdAtDate = date!;
+        // widget.task?.createdAtTime = time!;
+
+        widget.task?.save();
+        Navigator.of(context).pop();
+      } catch (error) {
+        updateTaskWarning(context);
+      }
+
+      ///Here we create a new Task
+    } else {
+      if (title != null && subtitle != null) {
+        var task = Task.create(
+          title: title,
+          createdAtTime: time,
+          createdAtDate: date,
+          subtitle: subtitle,
+        );
+
+        ///we adding this new task to Hive DB using inherited widget
+        BaseWidget.of(context).dataStore.addTask(task: task);
+        Navigator.of(context).pop();
+      } else {
+        emptyWarning(context);
+      }
+    }
+  }
+
+  ///Delete Task
+  /// Delete Selected Task
+  dynamic deleteTask() {
+    return widget.task?.delete();
+  }
+
+
+
+
+  var title;
+  var subtitle;
+  DateTime? time;
+  DateTime? date;
+
+
+  /// If any Task Already exist return TRUE otherWise FALSE
+  bool isTaskAlreadyExistBool() {
+    if (widget.titleTaskController?.text == null &&
+        widget.descriptionTaskController?.text == null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +175,15 @@ class _TaskViewState extends State<TaskView> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: isTaskAlreadyExistBool()?
+        MainAxisAlignment.center: MainAxisAlignment.spaceEvenly,
         children: [
+          isTaskAlreadyExistBool()? Container():
           /// Delete Current Task Button
           MaterialButton(
             onPressed: () {
-              log("Task Has Been Deleted.");
+              deleteTask();
+              Navigator.pop(context);
             },
             minWidth: 150,
             elevation: 5,
@@ -100,8 +210,7 @@ class _TaskViewState extends State<TaskView> {
           ///Add or Update Task Button
           MaterialButton(
             onPressed: () {
-              ///Add or Update Task Activity
-              log("New Task Has Been Created.");
+              isTaskAlreadyExistUpdateTaskOtherwiseCreate();
             },
             minWidth: 150,
             elevation: 10,
@@ -110,9 +219,10 @@ class _TaskViewState extends State<TaskView> {
               borderRadius: BorderRadius.circular(15),
             ),
             height: 55,
-            child: const Text(
-              AppStr.addNewTask,
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              isTaskAlreadyExistBool() ?
+              AppStr.addNewTask: AppStr.updateTaskString,
+              style: const TextStyle(color: Colors.white),
             ),
           )
         ],
@@ -138,13 +248,26 @@ class _TaskViewState extends State<TaskView> {
           ),
 
           ///Task Title
-          RepTextField(controller: widget.titleTaskController),
+          RepTextField(controller: widget.titleTaskController,
+            onFieldSubmitted: (String inputTitle) {
+            title = inputTitle;
+            },
+            onChanged: (String inputTitle) {
+              title = inputTitle;
+            },
+          ),
           10.h,
 
           ///Task Description
           RepTextField(
             controller: widget.descriptionTaskController,
             isForDescription: true,
+            onFieldSubmitted: (String inputSubtitle) {
+              subtitle = inputSubtitle;
+            },
+            onChanged: (String inputSubtitle) {
+              subtitle = inputSubtitle;
+            },
           ),
 
           ///Time Selection
@@ -155,15 +278,25 @@ class _TaskViewState extends State<TaskView> {
                 builder: (_) => SizedBox(
                   height: 280,
                   child: TimePickerWidget(
-                    // initDateTime
+                    initDateTime: showDateAsDateTime(time),
                     onChange: (_, __) {},
                     dateFormat: 'HH:mm',
-                    onConfirm: (dateTime, _) {},
+                    onConfirm: (dateTime, _) {
+                      setState(() {
+                        if(widget.task?.createAtTime == null){
+                          time = dateTime;
+                        }
+                        else{
+                          widget.task!.createAtTime==dateTime;
+                        }
+                      });
+                    },
                   ),
                 ),
               );
             },
             title: AppStr.timeString,
+            time: showTime(time),
           ),
 
           ///Date Selection
@@ -174,13 +307,23 @@ class _TaskViewState extends State<TaskView> {
                 maxDateTime: DateTime(2029, 12, 30),
                 minDateTime: DateTime.now(),
 
-                //Initial Date and Time
+                initialDateTime: showDateAsDateTime(date),
                 onConfirm: (dateTime, _) {
                   ///Will complete later
+                  setState(() {
+                    if(widget.task?.createdAtDate == null){
+                      date = dateTime;
+                    }
+                    else{
+                      widget.task!.createdAtDate==dateTime;
+                    }
+                  });
                 },
               );
             },
             title: AppStr.dateString,
+            isTime: true,
+            time: showDate(date),
           ),
         ],
       ),
@@ -210,7 +353,8 @@ class _TaskViewState extends State<TaskView> {
 
           RichText(
               text: TextSpan(
-            text: AppStr.addNewTask,
+            text: isTaskAlreadyExistBool()?
+            AppStr.addNewTask:AppStr.updateCurrentTask,
             style: textTheme.titleLarge,
             children: const [
               TextSpan(

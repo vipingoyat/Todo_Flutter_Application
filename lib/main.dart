@@ -17,16 +17,16 @@ Future<void> main() async {
 
   ///Not necessary step
   ///Delete data from previous day
-  box.values.forEach(
-        (task) {
-      if (task.createdAtTime.day != DateTime.now().day){
-        task.delete();
-      }
-      else{
-        ///Do Nothing
-      }
-    },
-  );
+  // box.values.forEach(
+  //       (task) {
+  //     if (task.createdAtDate.day != DateTime.now().day){
+  //       task.delete();
+  //     }
+  //     else{
+  //       ///Do Nothing
+  //     }
+  //   },
+  // );
 
   runApp(BaseWidget(child: const MyApp()));
 }

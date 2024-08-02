@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 class DateTimeSelectionWidget extends StatelessWidget {
   const DateTimeSelectionWidget({
     super.key,
-    required this.onTap, required this.title,
+    required this.onTap, required this.title, required this.time,
+     this.isTime = false,
   });
 
   final VoidCallback onTap;
   final String title;
+  final String time;
+  final bool isTime;
   @override
   Widget build(BuildContext context) {
     var textTheme = Theme.of(context).textTheme;
@@ -36,15 +39,15 @@ class DateTimeSelectionWidget extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.only(right: 10),
-              width: 80,
-              height: 35,
+              width: isTime? 150:80,
+              height: 39,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.grey.shade100),
               child: Center(
                 ///Text will show date and time as time
                 child: Text(
-                  title,
+                  time,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),

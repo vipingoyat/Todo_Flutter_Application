@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 
 class HomeAppBar extends StatefulWidget {
-  const HomeAppBar({super.key});
+  const HomeAppBar({super.key, required this.drawerKey});
+
+  final GlobalKey<SliderDrawerState> drawerKey;
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();
@@ -26,14 +29,17 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  //OnToggle
   void onDrawerToggle(){
     setState(() {
       isDrawerOpen = !isDrawerOpen;
       if(isDrawerOpen){
         animeController.forward();
+        widget.drawerKey.currentState!.openSlider();
       }
       else{
         animeController.reverse();
+        widget.drawerKey.currentState!.closeSlider();
       }
     });
   }
@@ -47,6 +53,8 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+
+            //Menu Icon
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: IconButton(
@@ -58,10 +66,14 @@ class _HomeAppBarState extends State<HomeAppBar> with SingleTickerProviderStateM
                 ),
               ),
             ),
+
+            //Trash Icon
             Padding(
               padding: const EdgeInsets.only(right: 15,top: 10),
               child: IconButton(
-                onPressed : onDrawerToggle,
+                onPressed : (){
+                  //TODO: We Will Remove All the Task from DB With This Button
+                },
                 icon: const Icon(
                   CupertinoIcons.trash,
                   color: Colors.black,

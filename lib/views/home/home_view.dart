@@ -9,6 +9,7 @@ import 'package:untitled/views/home/components/home_app_bar.dart';
 import 'package:untitled/views/home/widget/task_widget.dart';
 import '../../utils/app_str.dart';
 import 'components/fab.dart';
+import 'components/slider_drawer.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,7 +20,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   GlobalKey<SliderDrawerState> drawerKey = GlobalKey<SliderDrawerState>();
-  final List<int> testing = [];
+  final List<int> testing = [1,2,3];
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +40,7 @@ class _HomeViewState extends State<HomeView> {
         animationDuration: 1000,
 
         //Drawer
-          slider: Container(
-            color: Colors.red,
-          ),
+          slider: CustomDrawer(),
 
           appBar: HomeAppBar(drawerKey: drawerKey),
 
@@ -64,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
           //Custom AppBar
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.only(top: 70),
+            // margin: const EdgeInsets.only(),
             height: 100,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,10 +85,7 @@ class _HomeViewState extends State<HomeView> {
                 //Space
                 25.w,
 
-
                 //Top Level Task Info
-
-
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
